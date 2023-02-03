@@ -1,5 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:task_manager_app/pages/signin_page.dart';
+import 'package:task_manager_app/pages/signup_page.dart';
 import 'firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 
@@ -29,21 +31,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text("Firebase"),
-        ),
-        body: Center(
-          child: ElevatedButton(
-            onPressed: () {
-              signup();
-            },
-            child: const Text("Sign up"),
-          ),
-        ),
-      ),
-    );
+    return const MaterialApp(
+        debugShowCheckedModeBanner: false, home: SigninPage());
   }
 }
