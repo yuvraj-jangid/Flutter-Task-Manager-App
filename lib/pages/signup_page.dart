@@ -49,7 +49,7 @@ class _MyWidgetState extends State<SignupPage> {
               const SizedBox(
                 height: 5,
               ),
-              buttonItem("assets/phone.svg", "Continue with Phone", 25,(){}),
+              buttonItem("assets/phone.svg", "Continue with Phone", 25, () {}),
               const SizedBox(
                 height: 10,
               ),
@@ -75,7 +75,7 @@ class _MyWidgetState extends State<SignupPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
+                  const Text(
                     "Already an user? ",
                     style: TextStyle(
                         color: Colors.black,
@@ -89,7 +89,7 @@ class _MyWidgetState extends State<SignupPage> {
                           MaterialPageRoute(builder: (builder) => SigninPage()),
                           (route) => false);
                     },
-                    child: Text(
+                    child: const Text(
                       "Login",
                       style: TextStyle(
                           decoration: TextDecoration.underline,
@@ -108,9 +108,9 @@ class _MyWidgetState extends State<SignupPage> {
   }
 
   Widget buttonItem(
-      String imagepath, String buttonName, double size, Function onTap) {
+      String imagepath, String buttonName, double size, VoidCallback onTap) {
     return InkWell(
-      onTap: onTap; ,
+      onTap: onTap,
       child: Container(
         width: MediaQuery.of(context).size.width - 60,
         height: 60,
@@ -150,7 +150,7 @@ class _MyWidgetState extends State<SignupPage> {
       child: TextFormField(
         obscureText: obscureText,
         controller: controller,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 17,
           color: Colors.white,
         ),
@@ -185,10 +185,11 @@ class _MyWidgetState extends State<SignupPage> {
           setState(() {
             circular = false;
           });
+          // ignore: use_build_context_synchronously
           Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
-                builder: (builder) => HomePage(),
+                builder: (builder) => const HomePage(),
               ),
               (route) => false);
         } catch (e) {
@@ -212,7 +213,7 @@ class _MyWidgetState extends State<SignupPage> {
         child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           circular
               ? CircularProgressIndicator()
-              : Text(
+              : const Text(
                   "Sign up",
                   style: TextStyle(color: Colors.black, fontSize: 20),
                 ),
