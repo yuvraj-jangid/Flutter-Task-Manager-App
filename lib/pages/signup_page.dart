@@ -108,9 +108,9 @@ class _MyWidgetState extends State<SignupPage> {
   }
 
   Widget buttonItem(
-      String imagepath, String buttonName, double size, Function onTap) {
+      String imagepath, String buttonName, double size, VoidCallback onTap) {
     return InkWell(
-      onTap: onTap; ,
+      onTap: onTap ,
       child: Container(
         width: MediaQuery.of(context).size.width - 60,
         height: 60,
