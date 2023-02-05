@@ -1,7 +1,11 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:task_manager_app/pages/HomePage.dart';
+import 'package:task_manager_app/pages/signin_page.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -11,6 +15,13 @@ class SignupPage extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<SignupPage> {
+  static firebase_auth.FirebaseAuth firebaseAuth =
+      firebase_auth.FirebaseAuth.instance;
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _pwdController = TextEditingController();
+
+  bool circular = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,11 +55,11 @@ class _MyWidgetState extends State<SignupPage> {
               const SizedBox(
                 height: 10,
               ),
-              textItem("Please enter your e-mail"),
+              textItem("E-mail", _emailController, false),
               const SizedBox(
                 height: 10,
               ),
-              textItem("Please enter your password"),
+              textItem("Password", _pwdController, true),
               const SizedBox(
                 height: 20,
               ),
@@ -58,13 +69,29 @@ class _MyWidgetState extends State<SignupPage> {
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
+                children:  [
                   Text(
-                    "Already an user? Log in here!",
+                    "Already an user? ",
                     style: TextStyle(
                         color: Colors.black,
                         fontSize: 17,
                         fontWeight: FontWeight.bold),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (builder) => SigninPage()),
+                          (route) => false);
+                    },
+                    child: Text(
+                      "Login",
+                      style: TextStyle(
+                          decoration: TextDecoration.underline,
+                          color: Color.fromARGB(255, 51, 33, 243),
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold),
+                    ),
                   )
                 ],
               )
@@ -106,14 +133,27 @@ class _MyWidgetState extends State<SignupPage> {
     );
   }
 
-  Widget textItem(String labelText) {
+  Widget textItem(
+      String labelText, TextEditingController controller, bool obscureText) {
     return SizedBox(
       width: MediaQuery.of(context).size.width - 70,
       height: 55,
       child: TextFormField(
+        obscureText: obscureText,
+        controller: controller,
+        style: TextStyle(
+          fontSize: 17,
+          color: Colors.white,
+        ),
         decoration: InputDecoration(
             labelText: labelText,
-            labelStyle: const TextStyle(fontSize: 17, color: Colors.white),
+            labelStyle: const TextStyle(
+              fontSize: 17,
+              color: Colors.white,
+            ),
+            focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(width: 1.5, color: Colors.amber)),
             enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
                 borderSide: const BorderSide(width: 1, color: Colors.black))),
@@ -122,30 +162,61 @@ class _MyWidgetState extends State<SignupPage> {
   }
 
   Widget colorButton() {
-    return Container(
-      width: MediaQuery.of(context).size.width - 90,
-      height: 60,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(30),
-          gradient: const LinearGradient(colors: [
-            Color(0xfffd746c),
-            Color(0xffff9068),
-            Color(0xfffd746c)
-          ])),
-      child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Text(
-          "Sign up",
-          style: TextStyle(color: Colors.black, fontSize: 20),
-        ),
-        const SizedBox(
-          width: 15,
-        ),
-        SvgPicture.asset(
-          "assets/arrow.svg",
-          height: 25,
-          width: 25,
-        ),
-      ]),
+    return InkWell(
+      onTap: () async {
+        setState(() {
+          circular = true;
+        });
+        try {
+          firebase_auth.UserCredential userCredential =
+              await firebaseAuth.createUserWithEmailAndPassword(
+                  email: _emailController.text, password: _pwdController.text);
+          print(userCredential.user);
+
+          setState(() {
+            circular = false;
+          });
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (builder) => HomePage(),
+              ),
+              (route) => false);
+        } catch (e) {
+          final snackbar = SnackBar(content: Text(e.toString()));
+          ScaffoldMessenger.of(context).showSnackBar(snackbar);
+          setState(() {
+            circular = false;
+          });
+        }
+      },
+      child: Container(
+        width: MediaQuery.of(context).size.width - 90,
+        height: 60,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(30),
+            gradient: const LinearGradient(colors: [
+              Color(0xfffd746c),
+              Color(0xffff9068),
+              Color(0xfffd746c)
+            ])),
+        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          circular
+              ? CircularProgressIndicator()
+              : Text(
+                  "Sign up",
+                  style: TextStyle(color: Colors.black, fontSize: 20),
+                ),
+          const SizedBox(
+            width: 15,
+          ),
+          SvgPicture.asset(
+            "assets/arrow.svg",
+            height: 25,
+            width: 25,
+          ),
+        ]),
+      ),
     );
   }
 }

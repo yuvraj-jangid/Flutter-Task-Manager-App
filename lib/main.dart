@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
   void signup() async {
     try {
       await firebaseAuth.createUserWithEmailAndPassword(
-          email: "test@gmail.com", password: "123456");
+          email: " ", password: "123456");
     } catch (e) {
       print(e);
     }
@@ -32,6 +32,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-        debugShowCheckedModeBanner: false, home: SigninPage());
+        debugShowCheckedModeBanner: false, home: SignupPage());
   }
 }
