@@ -8,6 +8,7 @@ import 'firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 
 void main() async {
+  
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -18,6 +19,7 @@ void main() async {
 // ignore: must_be_immutable
 
 class MyApp extends StatefulWidget {
+  
   MyApp({Key? key}) : super(key: key);
 
   @override
@@ -47,6 +49,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: currentPage,
     );
   }

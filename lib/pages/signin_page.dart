@@ -118,7 +118,7 @@ class _MyWidgetState extends State<SigninPage> {
   }
 
   Widget ButtonItem(
-      String imagepath, String buttonName, double size, Function onTap) {
+      String imagepath, String buttonName, double size, VoidCallback onTap) {
     return InkWell(
       onTap: onTap,
       child: SizedBox(
