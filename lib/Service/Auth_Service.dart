@@ -67,4 +67,6 @@ class AuthClass {
       await storage.delete(key: "token");
     } catch (e) {}
   }
+
+  
 }
