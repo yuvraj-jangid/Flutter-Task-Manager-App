@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:task_manager_app/Service/Auth_Service.dart';
 import 'package:task_manager_app/pages/HomePage.dart';
+import 'package:task_manager_app/pages/PhoneAuthPage.dart';
 import 'package:task_manager_app/pages/signin_page.dart';
 
 class SignupPage extends StatefulWidget {
@@ -49,7 +50,10 @@ class _MyWidgetState extends State<SignupPage> {
               const SizedBox(
                 height: 5,
               ),
-              buttonItem("assets/phone.svg", "Continue with Phone", 25, () {}),
+              buttonItem("assets/phone.svg", "Continue with Phone", 25, () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (builder) => PhoneAuthPage()));
+              }),
               const SizedBox(
                 height: 10,
               ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:task_manager_app/Service/Auth_Service.dart';
 import 'package:task_manager_app/pages/signup_page.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 
@@ -20,6 +21,7 @@ class _MyWidgetState extends State<SigninPage> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _pwdController = TextEditingController();
   bool circular = false;
+  AuthClass authClass = AuthClass();
 
   @override
   Widget build(BuildContext context) {
@@ -39,11 +41,13 @@ class _MyWidgetState extends State<SigninPage> {
                     color: Colors.white,
                     fontWeight: FontWeight.bold),
               ),
-              ButtonItem("assets/google.svg", "Continue with Google", 25),
+              ButtonItem("assets/google.svg", "Continue with Google", 25, () {
+                authClass.googleSignIn(context);
+              }),
               const SizedBox(
                 height: 5,
               ),
-              ButtonItem("assets/phone.svg", "Continue with Phone", 25),
+              ButtonItem("assets/phone.svg", "Continue with Phone", 25, () {}),
               const SizedBox(
                 height: 10,
               ),
@@ -113,38 +117,42 @@ class _MyWidgetState extends State<SigninPage> {
     );
   }
 
-  Widget ButtonItem(String imagepath, String buttonName, double size) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width - 60,
-      height: 60,
-      child: Card(
-        color: const Color.fromARGB(255, 3, 66, 87),
-        elevation: 8,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-            side: const BorderSide(width: 1, color: Colors.black)),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SvgPicture.asset(
-              imagepath,
-              height: size,
-              width: size,
-            ),
-            const SizedBox(
-              width: 15,
-            ),
-            Text(
-              buttonName,
-              style: const TextStyle(fontSize: 15, color: Colors.white),
-            )
-          ],
+  Widget ButtonItem(
+      String imagepath, String buttonName, double size, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width - 60,
+        height: 60,
+        child: Card(
+          color: const Color.fromARGB(255, 3, 66, 87),
+          elevation: 8,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+              side: const BorderSide(width: 1, color: Colors.black)),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SvgPicture.asset(
+                imagepath,
+                height: size,
+                width: size,
+              ),
+              const SizedBox(
+                width: 15,
+              ),
+              Text(
+                buttonName,
+                style: const TextStyle(fontSize: 15, color: Colors.white),
+              )
+            ],
+          ),
         ),
       ),
     );
   }
 
-Widget textItem(
+  Widget textItem(
       String labelText, TextEditingController controller, bool obscureText) {
     return SizedBox(
       width: MediaQuery.of(context).size.width - 70,
@@ -179,7 +187,7 @@ Widget textItem(
           firebase_auth.UserCredential userCredential =
               await firebaseAuth.signInWithEmailAndPassword(
                   email: _emailController.text, password: _pwdController.text);
-                  print(userCredential.user);
+          print(userCredential.user);
 
           setState(() {
             circular = false;
@@ -209,13 +217,12 @@ Widget textItem(
               Color(0xfffd746c)
             ])),
         child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          
           circular
               ? CircularProgressIndicator()
               : Text(
-            "Sign in",
-            style: TextStyle(color: Colors.black, fontSize: 20),
-          ),
+                  "Sign in",
+                  style: TextStyle(color: Colors.black, fontSize: 20),
+                ),
           const SizedBox(
             width: 15,
           ),
