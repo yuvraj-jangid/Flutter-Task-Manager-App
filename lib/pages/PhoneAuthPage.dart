@@ -28,7 +28,7 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
       backgroundColor: Colors.black87,
       appBar: AppBar(
         backgroundColor: Colors.black87,
-        title: Text(
+        title: const Text(
           "SignUp",
           style: TextStyle(color: Colors.white, fontSize: 24),
         ),
@@ -103,7 +103,7 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
                     color: Color.fromARGB(255, 255, 240, 145),
                     borderRadius: BorderRadius.circular(15),
                   ),
-                  child: Center(
+                  child: const Center(
                     child: Text("Lets Go",
                         style: TextStyle(
                             fontSize: 16,
