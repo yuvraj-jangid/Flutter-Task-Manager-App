@@ -1,3 +1,9 @@
+// import 'dart:js';
+
+// import 'dart:js';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -11,6 +17,10 @@ class AddTodo extends StatefulWidget {
 }
 
 class _AddTodoState extends State<AddTodo> {
+  TextEditingController _titleController = TextEditingController();
+  TextEditingController _descController = TextEditingController();
+  String type = "";
+  String category = "";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,7 +79,7 @@ class _AddTodoState extends State<AddTodo> {
                     const SizedBox(
                       height: 12,
                     ),
-                    textField(55, "Text title"),
+                    title(),
                     const SizedBox(
                       height: 20,
                     ),
@@ -79,11 +89,11 @@ class _AddTodoState extends State<AddTodo> {
                     ),
                     Row(
                       children: [
-                        chipData("Important", 0xffcb1104),
+                        taskType("Important", 0xffcb1104),
                         const SizedBox(
                           width: 15,
                         ),
-                        chipData("Planned", 0xff2bc8d9),
+                        taskType("Planned", 0xff2bc8d9),
                       ],
                     ),
                     const SizedBox(
@@ -93,7 +103,7 @@ class _AddTodoState extends State<AddTodo> {
                     const SizedBox(
                       height: 10,
                     ),
-                    textField(155, "Description"),
+                    description(),
                     const SizedBox(
                       height: 20,
                     ),
@@ -104,19 +114,19 @@ class _AddTodoState extends State<AddTodo> {
                     Wrap(
                       runSpacing: 10,
                       children: [
-                        chipData("Food", 0xffff6d6e),
+                        taskCategory("Food", 0xffff6d6e),
                         const SizedBox(
                           width: 15,
                         ),
-                        chipData("Workout", 0xfff29732),
+                        taskCategory("Workout", 0xfff29732),
                         const SizedBox(
                           width: 15,
                         ),
-                        chipData("Work", 0xff6557ff),
+                        taskCategory("Work", 0xff6557ff),
                         const SizedBox(
                           width: 15,
                         ),
-                        chipData("Miscellaneous", 0xff2bc8d9),
+                        taskCategory("Miscellaneous", 0xff2bc8d9),
                       ],
                     ),
                     const SizedBox(
@@ -137,41 +147,82 @@ class _AddTodoState extends State<AddTodo> {
   }
 
   Widget button() {
-    return Container(
-      height: 56,
-      width: MediaQuery.of(context).size.width,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
-          gradient: const LinearGradient(colors: [
-            Color(0xff8a32f1),
-            Color(0xffad32f9),
-          ])),
-      child: const Center(
-        child: Text(
-          "Add task",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
+    return InkWell(
+      onTap: () {
+        FirebaseFirestore.instance.collection("Tasks").add({
+          "title": _titleController.text.trim(),
+          "description": _descController.text.trim(),
+          "task-type": type,
+          "category": category,
+        });
+        Navigator.pop(context);
+      },
+      child: Container(
+        height: 56,
+        width: MediaQuery.of(context as BuildContext).size.width,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            gradient: const LinearGradient(colors: [
+              Color(0xff8a32f1),
+              Color(0xffad32f9),
+            ])),
+        child: const Center(
+          child: Text(
+            "Add task",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget chipData(String label, int color) {
-    return Chip(
-      backgroundColor: Color(color),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      label: Text(
-        label,
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 17,
-          fontWeight: FontWeight.w600,
+  Widget taskType(String label, int color) {
+    return InkWell(
+      onTap: () {
+        setState(() {
+          type = label;
+        });
+      },
+      child: Chip(
+        backgroundColor: type == label ? Colors.yellowAccent : Color(color),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        label: Text(
+          label,
+          style: TextStyle(
+            color: type == label ? Colors.black : Colors.white,
+            fontSize: 17,
+            fontWeight: FontWeight.w600,
+          ),
         ),
+        labelPadding: const EdgeInsets.symmetric(horizontal: 17, vertical: 3.8),
       ),
-      labelPadding: const EdgeInsets.symmetric(horizontal: 17, vertical: 3.8),
+    );
+  }
+
+  Widget taskCategory(String label, int color) {
+    return InkWell(
+      onTap: () {
+        setState(() {
+          category = label;
+        });
+      },
+      child: Chip(
+        backgroundColor: category == label ? Colors.yellow : Color(color),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        label: Text(
+          label,
+          style: TextStyle(
+            color: category == label ? Colors.black : Colors.white,
+            fontSize: 17,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        labelPadding: const EdgeInsets.symmetric(horizontal: 17, vertical: 3.8),
+      ),
     );
   }
 
@@ -186,24 +237,52 @@ class _AddTodoState extends State<AddTodo> {
     );
   }
 
-  Widget textField(double height, String text) {
+  Widget title() {
     return Container(
-      height: height,
-      width: MediaQuery.of(context).size.width,
+      height: 55,
+      width: double.infinity,
       decoration: BoxDecoration(
           color: const Color.fromARGB(255, 41, 46, 62),
           borderRadius: BorderRadius.circular(15)),
       child: TextFormField(
+        controller: _titleController,
         style: const TextStyle(
           color: Colors.grey,
           fontSize: 17,
         ),
         maxLines: null,
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           border: InputBorder.none,
-          hintText: text,
-          contentPadding: const EdgeInsets.only(left: 20, right: 20, top: 3),
-          hintStyle: const TextStyle(
+          hintText: "Enter task title",
+          contentPadding: EdgeInsets.only(left: 20, right: 20, top: 3),
+          hintStyle: TextStyle(
+            color: Colors.grey,
+            fontSize: 17,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget description() {
+    return Container(
+      height: 155,
+      width: double.infinity,
+      decoration: BoxDecoration(
+          color: const Color.fromARGB(255, 41, 46, 62),
+          borderRadius: BorderRadius.circular(15)),
+      child: TextFormField(
+        controller: _descController,
+        style: const TextStyle(
+          color: Colors.grey,
+          fontSize: 17,
+        ),
+        maxLines: null,
+        decoration: const InputDecoration(
+          border: InputBorder.none,
+          hintText: "Enter task description",
+          contentPadding: EdgeInsets.only(left: 20, right: 20, top: 3),
+          hintStyle: TextStyle(
             color: Colors.grey,
             fontSize: 17,
           ),
