@@ -6,10 +6,14 @@ import 'package:task_manager_app/pages/HomePage.dart';
 import 'package:task_manager_app/pages/signin_page.dart';
 import 'package:task_manager_app/pages/signup_page.dart';
 import 'firebase_options.dart';
+import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+ ));
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -47,9 +51,9 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: AddTodo(),
+      home: currentPage,
     );
   }
 }
