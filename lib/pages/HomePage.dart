@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -17,8 +18,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   AuthClass authClass = AuthClass();
-  final Stream<QuerySnapshot> _stream =
-      FirebaseFirestore.instance.collection("Tasks").snapshots();
+  // var currentUser = FirebaseAuth.instance.currentUser!.uid;
+  final Stream<QuerySnapshot> _stream = FirebaseFirestore.instance
+      .collection("Tasks")
+      .where("author", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+      .snapshots();
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +96,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
-        BottomNavigationBarItem(
+        const BottomNavigationBarItem(
           label: "",
           icon: Icon(
             Icons.settings,
@@ -114,23 +118,32 @@ class _HomePageState extends State<HomePage> {
                   Color iconColor;
                   Map<String, dynamic> document =
                       snapshot.data?.docs[index].data() as Map<String, dynamic>;
+
                   switch (document["category"]) {
                     case "Food":
                       iconData = Icons.run_circle_outlined;
                       iconColor = Colors.red;
                       break;
-                    case "OrderFood":
-                      iconData = Icons.food_bank_rounded;
+                    case "Workout":
+                      iconData = Icons.fitness_center;
                       iconColor = Colors.teal;
+                      break;
+                    case "Work":
+                      iconData = Icons.laptop;
+                      iconColor = Color.fromARGB(255, 56, 156, 69);
+                      break;
+                    case "Miscellaneous":
+                      iconData = Icons.nature;
+                      iconColor = Color.fromARGB(255, 76, 144, 175);
                       break;
                     default:
                       iconData = Icons.run_circle_outlined;
                       iconColor = Colors.red;
                   }
                   return TodoCard(
-                    title: document["title"] == null
-                        ? "Hey There"
-                        : document["title"],
+                    // userid: currentUser,
+                    // userid: currentUser,
+                    title: document["title"] ?? "Hey There",
                     check: true,
                     iconBgColor: Colors.white,
                     iconColor: iconColor,
