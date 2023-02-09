@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -16,6 +17,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   AuthClass authClass = AuthClass();
+  final Stream<QuerySnapshot> _stream =
+      FirebaseFirestore.instance.collection("Todo").snapshots();
 
   @override
   Widget build(BuildContext context) {
@@ -98,28 +101,44 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ]),
-      body: Scrollbar(
-        child: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          child: Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            child: Column(
-              children: [
-                TodoCard(
-                  title: "Lets roll",
-                  check: true,
-                  iconBgColor: Colors.white,
-                  iconColor: Colors.red,
-                  iconData: Icons.alarm,
-                  time: "10 AM",
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+      body: StreamBuilder(
+          stream: _stream,
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return Center(child: CircularProgressIndicator());
+            }
+            return ListView.builder(
+                itemCount: snapshot.data?.docs.length,
+                itemBuilder: (context, index) {
+                  IconData iconData;
+                  Color iconColor;
+                  Map<String, dynamic> document =
+                      snapshot.data?.docs[index].data() as Map<String, dynamic>;
+                  switch (document["category"]) {
+                    case "Food":
+                      iconData = Icons.run_circle_outlined;
+                      iconColor = Colors.red;
+                      break;
+                    case "OrderFood":
+                      iconData = Icons.food_bank_rounded;
+                      iconColor = Colors.teal;
+                      break;
+                    default:
+                      iconData = Icons.run_circle_outlined;
+                      iconColor = Colors.red;
+                  }
+                  return TodoCard(
+                    title: document["title"] == null
+                        ? "Hey There"
+                        : document["title"],
+                    check: true,
+                    iconBgColor: Colors.white,
+                    iconColor: iconColor,
+                    iconData: iconData,
+                    time: "10 AM",
+                  );
+                });
+          }),
     );
   }
 }
