@@ -18,7 +18,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   AuthClass authClass = AuthClass();
   final Stream<QuerySnapshot> _stream =
-      FirebaseFirestore.instance.collection("Todo").snapshots();
+      FirebaseFirestore.instance.collection("Tasks").snapshots();
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +105,7 @@ class _HomePageState extends State<HomePage> {
           stream: _stream,
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             }
             return ListView.builder(
                 itemCount: snapshot.data?.docs.length,
@@ -142,14 +142,3 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
-
-// IconButton(
-//               icon: Icon(Icons.logout),
-//               onPressed: () async {
-//                 await authClass.logout();
-//                 Navigator.pushAndRemoveUntil(
-//                     context,
-//                     MaterialPageRoute(builder: (builder) => SignupPage()),
-//                     (route) => false);
-//               })
