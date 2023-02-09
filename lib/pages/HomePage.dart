@@ -5,6 +5,7 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:task_manager_app/Custom/TodoCard.dart';
 import 'package:task_manager_app/pages/AddTodo.dart';
 import 'package:task_manager_app/pages/signup_page.dart';
+import 'package:task_manager_app/pages/view_data.dart';
 
 import '../Service/Auth_Service.dart';
 
@@ -116,26 +117,44 @@ class _HomePageState extends State<HomePage> {
                       snapshot.data?.docs[index].data() as Map<String, dynamic>;
                   switch (document["category"]) {
                     case "Food":
-                      iconData = Icons.run_circle_outlined;
+                      iconData = Icons.food_bank;
                       iconColor = Colors.red;
                       break;
-                    case "OrderFood":
-                      iconData = Icons.food_bank_rounded;
+                    case "WorkOut":
+                      iconData = Icons.run_circle_outlined;
+                      iconColor = Colors.teal;
+                      break;
+                    case "Business":
+                      iconData = Icons.business;
+                      iconColor = Colors.teal;
+                      break;
+                    case "Miscellaneous":
+                      iconData = Icons.miscellaneous_services;
+                      iconColor = Colors.teal;
+                      break;
+                    case "Work":
+                      iconData = Icons.work_history_outlined;
                       iconColor = Colors.teal;
                       break;
                     default:
                       iconData = Icons.run_circle_outlined;
                       iconColor = Colors.red;
                   }
-                  return TodoCard(
-                    title: document["title"] == null
-                        ? "Hey There"
-                        : document["title"],
-                    check: true,
-                    iconBgColor: Colors.white,
-                    iconColor: iconColor,
-                    iconData: iconData,
-                    time: "10 AM",
+                  return InkWell(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (builder) => ViewData()));
+                    },
+                    child: TodoCard(
+                      title: document["title"] == null
+                          ? "Hey There"
+                          : document["title"],
+                      check: true,
+                      iconBgColor: Colors.white,
+                      iconColor: iconColor,
+                      iconData: iconData,
+                      time: "10 AM",
+                    ),
                   );
                 });
           }),

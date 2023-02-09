@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 
-class AddTodo extends StatefulWidget {
-  const AddTodo({super.key});
+class ViewData extends StatefulWidget {
+  const ViewData({super.key});
 
   @override
-  State<AddTodo> createState() => _AddTodoState();
+  State<ViewData> createState() => _ViewDataState();
 }
 
-class _AddTodoState extends State<AddTodo> {
+class _ViewDataState extends State<ViewData> {
   TextEditingController _titleController = TextEditingController();
   TextEditingController _descController = TextEditingController();
   String type = "";
@@ -63,7 +63,7 @@ class _AddTodoState extends State<AddTodo> {
                       height: 8,
                     ),
                     const Text(
-                      "New Task",
+                      "Your Todo",
                       style: TextStyle(
                           fontSize: 33,
                           color: Colors.white,
@@ -120,18 +120,11 @@ class _AddTodoState extends State<AddTodo> {
                         const SizedBox(
                           width: 15,
                         ),
-                        taskCategory("Business", 0xff6557ff),
-                        const SizedBox(
-                          width: 15,
-                        ),
-                        taskCategory("Miscellaneous", 0xff2bc8d9),
-                        const SizedBox(
-                          width: 15,
-                        ),
                         taskCategory("Work", 0xff6557ff),
                         const SizedBox(
                           width: 15,
                         ),
+                        taskCategory("Miscellaneous", 0xff2bc8d9),
                       ],
                     ),
                     const SizedBox(
