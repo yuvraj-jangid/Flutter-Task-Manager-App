@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -153,12 +154,16 @@ class _AddTodoState extends State<AddTodo> {
 
   Widget button() {
     return InkWell(
-      onTap: () {
+      onTap: () async {
+        final user = FirebaseAuth.instance.currentUser?.uid;
+        // final token = idToken.token.toString();
         FirebaseFirestore.instance.collection("Tasks").add({
           "title": _titleController.text.trim(),
           "description": _descController.text.trim(),
           "task-type": type,
           "category": category,
+          "created": FieldValue.serverTimestamp(),
+          "author": user,
         });
         Navigator.pop(context);
       },
