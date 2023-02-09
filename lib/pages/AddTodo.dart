@@ -1,7 +1,3 @@
-// import 'dart:js';
-
-// import 'dart:js';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
@@ -41,7 +37,9 @@ class _AddTodoState extends State<AddTodo> {
                 height: 30,
               ),
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pop(context);
+                },
                 icon: const Icon(CupertinoIcons.arrow_left),
                 color: Colors.white,
                 iconSize: 28,
@@ -159,7 +157,7 @@ class _AddTodoState extends State<AddTodo> {
       },
       child: Container(
         height: 56,
-        width: MediaQuery.of(context as BuildContext).size.width,
+        width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15),
             gradient: const LinearGradient(colors: [
