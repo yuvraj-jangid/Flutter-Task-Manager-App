@@ -31,28 +31,29 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Colors.black87,
       appBar: AppBar(
         backgroundColor: Colors.black87,
-        title: Text(
+        title: const Text(
           "Today's Schedule",
           style: TextStyle(
               fontSize: 34, fontWeight: FontWeight.bold, color: Colors.white),
         ),
         actions: [
           CircleAvatar(
+            backgroundColor: Colors.transparent,
             child: SizedBox(
                 child: ClipOval(
               child: Image.asset("assets/default_profile.png"),
             )),
-            backgroundColor: Colors.transparent,
           ),
-          SizedBox(
+          const SizedBox(
             width: 25,
           ),
         ],
-        bottom: PreferredSize(
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(35),
           child: Align(
             alignment: Alignment.centerLeft,
             child: Padding(
-              padding: const EdgeInsets.only(left: 22),
+              padding: EdgeInsets.only(left: 22),
               child: Text(
                 "Monday 21",
                 style: TextStyle(
@@ -62,12 +63,11 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-          preferredSize: Size.fromHeight(35),
         ),
       ),
       bottomNavigationBar:
           BottomNavigationBar(backgroundColor: Colors.black, items: [
-        BottomNavigationBarItem(
+        const BottomNavigationBarItem(
           label: "",
           icon: Icon(
             Icons.home,
@@ -79,17 +79,17 @@ class _HomePageState extends State<HomePage> {
           label: "",
           icon: InkWell(
             onTap: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (builder) => AddTodo()));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (builder) => const AddTodo()));
             },
             child: Container(
               height: 52,
               width: 52,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
                       colors: [Colors.indigoAccent, Colors.purple])),
-              child: Icon(
+              child: const Icon(
                 Icons.add,
                 size: 32,
                 color: Colors.white,
@@ -119,7 +119,13 @@ class _HomePageState extends State<HomePage> {
                   Color iconColor;
                   Map<String, dynamic> document =
                       snapshot.data?.docs[index].data() as Map<String, dynamic>;
-
+                  if (document.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        "You have no tasks",
+                      ),
+                    );
+                  }
                   switch (document["category"]) {
                     case "Food":
                       iconData = Icons.food_bank;
@@ -131,11 +137,11 @@ class _HomePageState extends State<HomePage> {
                       break;
                     case "Work":
                       iconData = Icons.laptop;
-                      iconColor = Color.fromARGB(255, 56, 156, 69);
+                      iconColor = const Color.fromARGB(255, 56, 156, 69);
                       break;
                     case "Miscellaneous":
                       iconData = Icons.nature;
-                      iconColor = Color.fromARGB(255, 76, 144, 175);
+                      iconColor = const Color.fromARGB(255, 76, 144, 175);
                       break;
                     default:
                       iconData = Icons.run_circle_outlined;

@@ -13,8 +13,8 @@ class ViewData extends StatefulWidget {
 }
 
 class _ViewDataState extends State<ViewData> {
-  TextEditingController _titleController = TextEditingController();
-  TextEditingController _descController = TextEditingController();
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _descController = TextEditingController();
   String type = "";
   String category = "";
   @override
