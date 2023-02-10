@@ -198,8 +198,9 @@ class _AddTodoState extends State<AddTodo> {
         });
       },
       child: Chip(
-        backgroundColor: type == label ? Colors.yellowAccent : Color(color),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        backgroundColor: type == label ? Colors.white : Color(color),
+        shape: type == label ?RoundedRectangleBorder(borderRadius: BorderRadius.circular(12),side: BorderSide(color: Colors.blue,width: 2)): RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))
+        ,
         label: Text(
           label,
           style: TextStyle(
@@ -221,8 +222,8 @@ class _AddTodoState extends State<AddTodo> {
         });
       },
       child: Chip(
-        backgroundColor: category == label ? Colors.yellow : Color(color),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        backgroundColor: category == label ? Colors.white : Color(color),
+        shape: type == label ?RoundedRectangleBorder(borderRadius: BorderRadius.circular(12),side: BorderSide(color: Colors.red,width: 2)): RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         label: Text(
           label,
           style: TextStyle(

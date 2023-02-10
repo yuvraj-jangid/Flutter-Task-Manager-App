@@ -6,17 +6,31 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 
 class ViewData extends StatefulWidget {
-  const ViewData({super.key});
+  ViewData({Key? key, this.document}) : super(key: key);
+  final Map<String, dynamic>? document;
 
   @override
   State<ViewData> createState() => _ViewDataState();
 }
 
 class _ViewDataState extends State<ViewData> {
-  TextEditingController _titleController = TextEditingController();
-  TextEditingController _descController = TextEditingController();
-  String type = "";
-  String category = "";
+  TextEditingController? _titleController;
+  TextEditingController? _descController;
+  String? type;
+  String? category;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    String title = widget.document?["title"] ?? "Hey There";
+    _titleController = TextEditingController(text: title);
+    _descController =
+        TextEditingController(text: widget.document?["description"]);
+    type = widget.document?["task"];
+    category = widget.document?["category"];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,7 +66,7 @@ class _ViewDataState extends State<ViewData> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      "Create",
+                      "View",
                       style: TextStyle(
                           fontSize: 33,
                           color: Colors.white,
@@ -148,8 +162,8 @@ class _ViewDataState extends State<ViewData> {
     return InkWell(
       onTap: () {
         FirebaseFirestore.instance.collection("Tasks").add({
-          "title": _titleController.text.trim(),
-          "description": _descController.text.trim(),
+          "title": _titleController!.text.trim(),
+          "description": _descController!.text.trim(),
           "task-type": type,
           "category": category,
         });
@@ -186,7 +200,7 @@ class _ViewDataState extends State<ViewData> {
         });
       },
       child: Chip(
-        backgroundColor: type == label ? Colors.yellowAccent : Color(color),
+        backgroundColor: type == label ? Colors.red : Color(color),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         label: Text(
           label,
@@ -209,7 +223,7 @@ class _ViewDataState extends State<ViewData> {
         });
       },
       child: Chip(
-        backgroundColor: category == label ? Colors.yellow : Color(color),
+        backgroundColor: category == label ? Colors.red : Color(color),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         label: Text(
           label,

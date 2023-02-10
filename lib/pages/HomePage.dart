@@ -11,7 +11,8 @@ import 'package:task_manager_app/pages/view_data.dart';
 import '../Service/Auth_Service.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+   HomePage({super.key});
+
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -118,7 +119,7 @@ class _HomePageState extends State<HomePage> {
                   IconData iconData;
                   Color iconColor;
                   Map<String, dynamic> document =
-                      snapshot.data?.docs[index].data() as Map<String, dynamic>;
+                      snapshot.data!.docs[index].data() as Map<String, dynamic>;
 
                   switch (document["category"]) {
                     case "Food":
@@ -141,15 +142,21 @@ class _HomePageState extends State<HomePage> {
                       iconData = Icons.run_circle_outlined;
                       iconColor = Colors.red;
                   }
-                  return TodoCard(
-                    // userid: currentUser,
-                    // userid: currentUser,
-                    title: document["title"] ?? "Hey There",
-                    check: true,
-                    iconBgColor: Colors.white,
-                    iconColor: iconColor,
-                    iconData: iconData,
-                    time: "10 AM",
+                  return InkWell(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (builder) => ViewData()));
+                    },
+                    child: TodoCard(
+                      // userid: currentUser,
+                      // userid: currentUser,
+                      title: document["title"] == null? "Hey There":document["title"],
+                      check: true,
+                      iconBgColor: Colors.white,
+                      iconColor: iconColor,
+                      iconData: iconData,
+                      time:"10AM",
+                    ),
                   );
                 });
           }),
