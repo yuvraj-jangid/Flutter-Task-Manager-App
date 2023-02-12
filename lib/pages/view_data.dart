@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,8 +8,9 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 
 class ViewData extends StatefulWidget {
-  ViewData({Key? key, this.document}) : super(key: key);
+  ViewData({Key? key, this.document,this.id}) : super(key: key);
   final Map<String, dynamic>? document;
+  final String? id;
 
   @override
   State<ViewData> createState() => _ViewDataState();
@@ -18,6 +21,7 @@ class _ViewDataState extends State<ViewData> {
   TextEditingController? _descController;
   String? type;
   String? category;
+  bool? edit = false;
 
   @override
   void initState() {
@@ -27,7 +31,7 @@ class _ViewDataState extends State<ViewData> {
     _titleController = TextEditingController(text: title);
     _descController =
         TextEditingController(text: widget.document?["description"]);
-    type = widget.document?["task"];
+    type = widget.document?["Tasks"];
     category = widget.document?["category"];
   }
 
@@ -50,14 +54,30 @@ class _ViewDataState extends State<ViewData> {
               const SizedBox(
                 height: 30,
               ),
-              IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: const Icon(CupertinoIcons.arrow_left),
-                color: Colors.white,
-                iconSize: 28,
-                padding: const EdgeInsets.only(left: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(CupertinoIcons.arrow_left),
+                    color: Colors.white,
+                    iconSize: 28,
+                    padding: const EdgeInsets.only(left: 10),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      setState(() {
+                        edit = !edit!;
+                      });
+                    },
+                    icon: Icon(Icons.edit),
+                    color: edit! ? Colors.blue : Colors.white,
+                    iconSize: 28,
+                    padding: const EdgeInsets.only(left: 10),
+                  ),
+                ],
               ),
               Padding(
                 padding:
@@ -65,8 +85,8 @@ class _ViewDataState extends State<ViewData> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      "View",
+                    Text(
+                      edit! ? "Editing" : "View",
                       style: TextStyle(
                           fontSize: 33,
                           color: Colors.white,
@@ -144,7 +164,7 @@ class _ViewDataState extends State<ViewData> {
                     const SizedBox(
                       height: 25,
                     ),
-                    button(),
+                    edit! ? button() : Container(),
                     const SizedBox(
                       height: 25,
                     ),
@@ -161,7 +181,7 @@ class _ViewDataState extends State<ViewData> {
   Widget button() {
     return InkWell(
       onTap: () {
-        FirebaseFirestore.instance.collection("Tasks").add({
+        FirebaseFirestore.instance.collection("Tasks").doc(widget.id).update({
           "title": _titleController!.text.trim(),
           "description": _descController!.text.trim(),
           "task-type": type,
@@ -180,7 +200,7 @@ class _ViewDataState extends State<ViewData> {
             ])),
         child: const Center(
           child: Text(
-            "Add task",
+            "Edit Done ",
             style: TextStyle(
               color: Colors.white,
               fontSize: 20,
@@ -194,14 +214,16 @@ class _ViewDataState extends State<ViewData> {
 
   Widget taskType(String label, int color) {
     return InkWell(
-      onTap: () {
-        setState(() {
-          type = label;
-        });
-      },
+      onTap: edit!
+          ? () {
+              setState(() {
+                type = label;
+              });
+            }
+          : null,
       child: Chip(
-        backgroundColor: type == label ? Colors.red : Color(color),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        backgroundColor: type == label ? Colors.white : Color(color),
+        shape: type == label ?RoundedRectangleBorder(borderRadius: BorderRadius.circular(12),side: BorderSide(color: Colors.blue,width: 2)): RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         label: Text(
           label,
           style: TextStyle(
@@ -217,14 +239,16 @@ class _ViewDataState extends State<ViewData> {
 
   Widget taskCategory(String label, int color) {
     return InkWell(
-      onTap: () {
-        setState(() {
-          category = label;
-        });
-      },
+      onTap: edit!
+          ? () {
+              setState(() {
+                category = label;
+              });
+            }
+          : null,
       child: Chip(
-        backgroundColor: category == label ? Colors.red : Color(color),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        backgroundColor: category == label ? Colors.white : Color(color),
+        shape: type == label ?  RoundedRectangleBorder(borderRadius: BorderRadius.circular(144)):RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         label: Text(
           label,
           style: TextStyle(
@@ -258,6 +282,7 @@ class _ViewDataState extends State<ViewData> {
           borderRadius: BorderRadius.circular(15)),
       child: TextFormField(
         controller: _titleController,
+        enabled: edit,
         style: const TextStyle(
           color: Colors.grey,
           fontSize: 17,
@@ -285,6 +310,7 @@ class _ViewDataState extends State<ViewData> {
           borderRadius: BorderRadius.circular(15)),
       child: TextFormField(
         controller: _descController,
+        enabled: edit,
         style: const TextStyle(
           color: Colors.grey,
           fontSize: 17,

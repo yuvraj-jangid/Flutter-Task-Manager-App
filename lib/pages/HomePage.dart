@@ -11,8 +11,7 @@ import 'package:task_manager_app/pages/view_data.dart';
 import '../Service/Auth_Service.dart';
 
 class HomePage extends StatefulWidget {
-   HomePage({super.key});
-
+  HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -144,18 +143,26 @@ class _HomePageState extends State<HomePage> {
                   }
                   return InkWell(
                     onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (builder) => ViewData()));
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (builder) => ViewData(
+                              document: document,
+                              id: snapshot.data!.docs[index].id),
+                        ),
+                      );
                     },
                     child: TodoCard(
                       // userid: currentUser,
                       // userid: currentUser,
-                      title: document["title"] == null? "Hey There":document["title"],
+                      title: document["title"] == null
+                          ? "Hey There"
+                          : document["title"],
                       check: true,
                       iconBgColor: Colors.white,
                       iconColor: iconColor,
                       iconData: iconData,
-                      time:"10AM",
+                      time: "10AM",
                     ),
                   );
                 });
