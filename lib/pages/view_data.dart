@@ -8,7 +8,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 
 class ViewData extends StatefulWidget {
-  ViewData({Key? key, this.document,this.id}) : super(key: key);
+  ViewData({Key? key, this.document, this.id}) : super(key: key);
   final Map<String, dynamic>? document;
   final String? id;
 
@@ -66,16 +66,37 @@ class _ViewDataState extends State<ViewData> {
                     iconSize: 28,
                     padding: const EdgeInsets.only(left: 10),
                   ),
-                  IconButton(
-                    onPressed: () {
-                      setState(() {
-                        edit = !edit!;
-                      });
-                    },
-                    icon: Icon(Icons.edit),
-                    color: edit! ? Colors.blue : Colors.white,
-                    iconSize: 28,
-                    padding: const EdgeInsets.only(left: 10),
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          FirebaseFirestore.instance
+                              .collection("Tasks")
+                              .doc(widget.id)
+                              .delete()
+                              .then((value) => null);
+                        },
+                        icon: const Icon(Icons.edit),
+                        color: edit! ? Colors.blue : Colors.white,
+                        iconSize: 28,
+                        padding: const EdgeInsets.only(left: 10),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          FirebaseFirestore.instance
+                              .collection("Tasks")
+                              .doc(widget.id)
+                              .delete()
+                              .then((value) {
+                            Navigator.pop(context);
+                          });
+                        },
+                        icon: const Icon(Icons.delete),
+                        color: Colors.red,
+                        iconSize: 28,
+                        padding: const EdgeInsets.only(left: 10),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -87,7 +108,7 @@ class _ViewDataState extends State<ViewData> {
                   children: [
                     Text(
                       edit! ? "Editing" : "View",
-                      style: TextStyle(
+                      style: const TextStyle(
                           fontSize: 33,
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -223,7 +244,11 @@ class _ViewDataState extends State<ViewData> {
           : null,
       child: Chip(
         backgroundColor: type == label ? Colors.white : Color(color),
-        shape: type == label ?RoundedRectangleBorder(borderRadius: BorderRadius.circular(12),side: BorderSide(color: Colors.blue,width: 2)): RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: type == label
+            ? RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: const BorderSide(color: Colors.blue, width: 2))
+            : RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         label: Text(
           label,
           style: TextStyle(
@@ -248,7 +273,9 @@ class _ViewDataState extends State<ViewData> {
           : null,
       child: Chip(
         backgroundColor: category == label ? Colors.white : Color(color),
-        shape: type == label ?  RoundedRectangleBorder(borderRadius: BorderRadius.circular(144)):RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: type == label
+            ? RoundedRectangleBorder(borderRadius: BorderRadius.circular(144))
+            : RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         label: Text(
           label,
           style: TextStyle(

@@ -12,6 +12,8 @@ class TodoCard extends StatelessWidget {
       this.time,
       this.check,
       this.iconBgColor,
+      this.onChange,
+      this.index,
       this.userid})
       : super(key: key);
   final String? title;
@@ -21,6 +23,8 @@ class TodoCard extends StatelessWidget {
   final bool? check;
   final Color? iconBgColor;
   final String? userid;
+  final Function onChange;
+  final int index;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +42,9 @@ class TodoCard extends StatelessWidget {
                 activeColor: Color.fromARGB(255, 74, 254, 143),
                 checkColor: Color.fromARGB(255, 91, 80, 255),
                 value: false,
-                onChanged: (bool? value) {},
+                onChanged: (bool? value) {
+                  onChange(index);
+                },
               ),
             ),
             data: ThemeData(

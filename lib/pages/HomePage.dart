@@ -24,7 +24,7 @@ class _HomePageState extends State<HomePage> {
       .collection("Tasks")
       .where("author", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
       .snapshots();
-
+  List<Select> selected = [];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,12 +53,30 @@ class _HomePageState extends State<HomePage> {
             alignment: Alignment.centerLeft,
             child: Padding(
               padding: const EdgeInsets.only(left: 22),
-              child: Text(
-                "Monday 21",
-                style: TextStyle(
-                    fontSize: 33,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Monday 21",
+                    style: TextStyle(
+                        fontSize: 33,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                    //   FirebaseFirestore.instance
+                    //       .collection("Tasks")
+                    //       .doc(widget.id)
+                    //       .delete()
+                    //       .then((value) => null);
+                    // },
+                    icon: const Icon(Icons.edit),
+                    color: edit! ? Colors.blue : Colors.white,
+                    iconSize: 28,
+                    padding: const EdgeInsets.only(left: 10),
+                  ),
+                ],
               ),
             ),
           ),
@@ -141,6 +159,9 @@ class _HomePageState extends State<HomePage> {
                       iconData = Icons.run_circle_outlined;
                       iconColor = Colors.red;
                   }
+                  selected.add(Select(
+                      id: snapshot.data!.docs[index].id,
+                      checkValue: false)); //Select
                   return InkWell(
                     onTap: () {
                       Navigator.push(
@@ -158,15 +179,29 @@ class _HomePageState extends State<HomePage> {
                       title: document["title"] == null
                           ? "Hey There"
                           : document["title"],
-                      check: true,
+                      check: selected[index].checkValue,
                       iconBgColor: Colors.white,
                       iconColor: iconColor,
                       iconData: iconData,
                       time: "10AM",
+                      index: index,
+                      onChange: onChange,
                     ),
                   );
                 });
           }),
     );
   }
+
+  void onChange(int index) {
+    setState(() {
+      selected[index].checkValue = !selected[index].checkValue;
+    });
+  }
+}
+
+class Select {
+  String id;
+  bool checkValue = false;
+  Select({this.id, this.checkValue});
 }
