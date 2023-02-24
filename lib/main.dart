@@ -17,25 +17,24 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 // ignore: must_be_immutable
 
 class MyApp extends StatefulWidget {
-  MyApp({Key? key}) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  Widget currentPage = SignupPage();
+  Widget currentPage = const SignupPage();
   AuthClass authClass = AuthClass();
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     checkLogin();
   }
@@ -44,7 +43,7 @@ class _MyAppState extends State<MyApp> {
     String? token = await authClass.getToken();
     if (token != null) {
       setState(() {
-        currentPage = HomePage();
+        currentPage = const HomePage();
       });
     }
   }

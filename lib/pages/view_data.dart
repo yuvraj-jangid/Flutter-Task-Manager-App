@@ -1,38 +1,34 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 
 class ViewData extends StatefulWidget {
-  const ViewData({Key? key, this.document}) : super(key: key);
+  ViewData({Key? key, this.document, this.docId}) : super(key: key);
   final Map<String, dynamic>? document;
+  final String? docId;
 
   @override
   State<ViewData> createState() => _ViewDataState();
 }
 
 class _ViewDataState extends State<ViewData> {
-  TextEditingController? _titleController = TextEditingController();
+  TextEditingController? _titleController;
   TextEditingController? _descController;
   String? type;
   String? category;
+  bool? edit = false;
+  // ignore: unused_field
+  // late final List<Widget> _id = AddTodo(documentId:)
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    String title;
-    if (widget.document?["title"] == null) {
-      title = "Test";
-    } else {
-      // title = widget.document!["title"];
-      _titleController = TextEditingController(text: widget.document!["title"]);
-    }
+    String title = widget.document?["title"] ?? "Hey There";
+    _titleController = TextEditingController(text: title);
     _descController =
         TextEditingController(text: widget.document?["description"]);
-    type = widget.document?["task"];
+    type = widget.document?["Tasks"];
     category = widget.document?["category"];
   }
 
@@ -55,14 +51,49 @@ class _ViewDataState extends State<ViewData> {
               const SizedBox(
                 height: 30,
               ),
-              IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: const Icon(CupertinoIcons.arrow_left),
-                color: Colors.white,
-                iconSize: 28,
-                padding: const EdgeInsets.only(left: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(CupertinoIcons.arrow_left),
+                    color: Colors.white,
+                    iconSize: 28,
+                    padding: const EdgeInsets.only(left: 10),
+                  ),
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            edit = !edit!;
+                          });
+                        },
+                        icon: const Icon(Icons.edit),
+                        color: edit! ? Colors.blue : Colors.white,
+                        iconSize: 28,
+                        padding: const EdgeInsets.only(left: 10),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          FirebaseFirestore.instance
+                              .collection("Tasks")
+                              .doc(widget.docId)
+                              .delete()
+                              .then((value) {
+                            Navigator.pop(context);
+                          });
+                        },
+                        icon: const Icon(Icons.delete),
+                        color: Colors.red,
+                        iconSize: 28,
+                        padding: const EdgeInsets.only(left: 10),
+                      ),
+                    ],
+                  ),
+                ],
               ),
               Padding(
                 padding:
@@ -70,9 +101,9 @@ class _ViewDataState extends State<ViewData> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      "Update",
-                      style: TextStyle(
+                    Text(
+                      edit! ? "Editing" : "View",
+                      style: const TextStyle(
                           fontSize: 33,
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -82,7 +113,7 @@ class _ViewDataState extends State<ViewData> {
                       height: 8,
                     ),
                     const Text(
-                      "Your Task",
+                      "Your Todo",
                       style: TextStyle(
                           fontSize: 33,
                           color: Colors.white,
@@ -149,7 +180,7 @@ class _ViewDataState extends State<ViewData> {
                     const SizedBox(
                       height: 25,
                     ),
-                    button(),
+                    edit! ? button() : Container(),
                     const SizedBox(
                       height: 25,
                     ),
@@ -166,8 +197,11 @@ class _ViewDataState extends State<ViewData> {
   Widget button() {
     return InkWell(
       onTap: () {
-        FirebaseFirestore.instance.collection("Tasks").add({
-          "title": _titleController?.text.trim(),
+        FirebaseFirestore.instance
+            .collection("Tasks")
+            .doc(widget.docId)
+            .update({
+          "title": _titleController!.text.trim(),
           "description": _descController!.text.trim(),
           "task-type": type,
           "category": category,
@@ -185,7 +219,7 @@ class _ViewDataState extends State<ViewData> {
             ])),
         child: const Center(
           child: Text(
-            "Update task",
+            "Edit Done ",
             style: TextStyle(
               color: Colors.white,
               fontSize: 20,
@@ -199,14 +233,20 @@ class _ViewDataState extends State<ViewData> {
 
   Widget taskType(String label, int color) {
     return InkWell(
-      onTap: () {
-        setState(() {
-          type = label;
-        });
-      },
+      onTap: edit!
+          ? () {
+              setState(() {
+                type = label;
+              });
+            }
+          : null,
       child: Chip(
-        backgroundColor: type == label ? Colors.red : Color(color),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        backgroundColor: type == label ? Colors.white : Color(color),
+        shape: type == label
+            ? RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: const BorderSide(color: Colors.blue, width: 2))
+            : RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         label: Text(
           label,
           style: TextStyle(
@@ -222,14 +262,18 @@ class _ViewDataState extends State<ViewData> {
 
   Widget taskCategory(String label, int color) {
     return InkWell(
-      onTap: () {
-        setState(() {
-          category = label;
-        });
-      },
+      onTap: edit!
+          ? () {
+              setState(() {
+                category = label;
+              });
+            }
+          : null,
       child: Chip(
-        backgroundColor: category == label ? Colors.red : Color(color),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        backgroundColor: category == label ? Colors.white : Color(color),
+        shape: type == label
+            ? RoundedRectangleBorder(borderRadius: BorderRadius.circular(144))
+            : RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         label: Text(
           label,
           style: TextStyle(
@@ -262,8 +306,8 @@ class _ViewDataState extends State<ViewData> {
           color: const Color.fromARGB(255, 41, 46, 62),
           borderRadius: BorderRadius.circular(15)),
       child: TextFormField(
-        // controller: _titleController,
         controller: _titleController,
+        enabled: edit,
         style: const TextStyle(
           color: Colors.grey,
           fontSize: 17,
@@ -291,6 +335,7 @@ class _ViewDataState extends State<ViewData> {
           borderRadius: BorderRadius.circular(15)),
       child: TextFormField(
         controller: _descController,
+        enabled: edit,
         style: const TextStyle(
           color: Colors.grey,
           fontSize: 17,

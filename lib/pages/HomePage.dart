@@ -1,17 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:intl/intl.dart';
 import 'package:task_manager_app/Custom/TodoCard.dart';
 import 'package:task_manager_app/pages/AddTodo.dart';
-import 'package:task_manager_app/pages/signup_page.dart';
+import 'package:task_manager_app/pages/ProfilePage.dart';
 import 'package:task_manager_app/pages/view_data.dart';
 
 import '../Service/Auth_Service.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({super.key});
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -19,11 +18,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   AuthClass authClass = AuthClass();
-  // var currentUser = FirebaseAuth.instance.currentUser!.uid;
   final Stream<QuerySnapshot> _stream = FirebaseFirestore.instance
       .collection("Tasks")
       .where("author", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
       .snapshots();
+  List<Select> selected = [];
 
   @override
   Widget build(BuildContext context) {
@@ -48,18 +47,23 @@ class _HomePageState extends State<HomePage> {
             width: 25,
           ),
         ],
-        bottom: const PreferredSize(
-          preferredSize: Size.fromHeight(35),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(35),
           child: Align(
             alignment: Alignment.centerLeft,
             child: Padding(
-              padding: EdgeInsets.only(left: 22),
-              child: Text(
-                "Monday 21",
-                style: TextStyle(
-                    fontSize: 33,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white),
+              padding: const EdgeInsets.only(left: 22),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    DateFormat('EEEE').format(DateTime.now()),
+                    style: const TextStyle(
+                        fontSize: 33,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white),
+                  ),
+                ],
               ),
             ),
           ),
@@ -97,12 +101,18 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
-        const BottomNavigationBarItem(
+        BottomNavigationBarItem(
           label: "",
-          icon: Icon(
-            Icons.settings,
-            size: 32,
-            color: Colors.white,
+          icon: InkWell(
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (builder) => const Profile()));
+            },
+            child: const Icon(
+              Icons.settings,
+              size: 32,
+              color: Colors.white,
+            ),
           ),
         ),
       ]),
@@ -140,26 +150,39 @@ class _HomePageState extends State<HomePage> {
                       iconData = Icons.run_circle_outlined;
                       iconColor = Colors.red;
                   }
+                  selected.add(Select(
+                      id: snapshot.data!.docs[index].id,
+                      checkValue: false)); //Select
                   return InkWell(
                     onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (builder) => const ViewData()));
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (builder) => ViewData()));
                     },
                     child: TodoCard(
-                      // userid: currentUser,
-                      // userid: currentUser,
                       title: document["title"] ?? "Hey There",
-                      check: true,
+                      check: selected[index].checkValue,
                       iconBgColor: Colors.white,
                       iconColor: iconColor,
                       iconData: iconData,
-                      time: "10AM",
+                      time: "10",
+                      index: index,
+                      onChange: onChange,
                     ),
                   );
                 });
           }),
     );
   }
+
+  void onChange(int index) {
+    setState(() {
+      selected[index].checkValue = !selected[index].checkValue;
+    });
+  }
+}
+
+class Select {
+  String id;
+  bool checkValue = false;
+  Select({required this.id, required this.checkValue});
 }
