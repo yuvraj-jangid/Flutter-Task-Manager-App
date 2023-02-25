@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ViewData extends StatefulWidget {
-  ViewData({Key? key, this.document, this.docId}) : super(key: key);
+  const ViewData({Key? key, this.document, this.docId}) : super(key: key);
   final Map<String, dynamic>? document;
   final String? docId;
 
