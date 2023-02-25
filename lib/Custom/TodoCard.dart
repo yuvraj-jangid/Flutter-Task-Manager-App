@@ -12,6 +12,8 @@ class TodoCard extends StatelessWidget {
       this.time,
       this.check,
       this.iconBgColor,
+      this.onChange,
+      this.index,
       this.userid})
       : super(key: key);
   final String? title;
@@ -21,6 +23,8 @@ class TodoCard extends StatelessWidget {
   final bool? check;
   final Color? iconBgColor;
   final String? userid;
+  final Function? onChange;
+  final int? index;
 
   @override
   Widget build(BuildContext context) {
@@ -29,67 +33,54 @@ class TodoCard extends StatelessWidget {
       child: Row(
         children: [
           Theme(
-            child: Transform.scale(
-              scale: 1.5,
-              child: Checkbox(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
+              data: ThemeData(
+                  primarySwatch: Colors.blue,
+                  unselectedWidgetColor: const Color.fromRGBO(43, 46, 61, 1)),
+              child: Expanded(
+                child: Container(
+                  height: 75,
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    color: const Color.fromRGBO(43, 46, 61, 0.819),
+                    child: Row(
+                      children: [
+                        const SizedBox(
+                          width: 15,
+                        ),
+                        Container(
+                          height: 33,
+                          width: 36,
+                          decoration: BoxDecoration(
+                            color: iconBgColor,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Icon(iconData, color: iconColor),
+                        ),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        Expanded(
+                          child: Text(title!,
+                              style: const TextStyle(
+                                  fontSize: 20,
+                                  letterSpacing: 1,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white)),
+                        ),
+                        Text(time!,
+                            style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white)),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-                activeColor: Color.fromARGB(255, 74, 254, 143),
-                checkColor: Color.fromARGB(255, 91, 80, 255),
-                value: false,
-                onChanged: (bool? value) {},
-              ),
-            ),
-            data: ThemeData(
-                primarySwatch: Colors.blue,
-                unselectedWidgetColor: Color.fromRGBO(43, 46, 61, 1)),
-          ),
-          Expanded(
-            child: Container(
-              height: 75,
-              child: Card(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
-                color: Color.fromRGBO(43, 46, 61, 0.819),
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 15,
-                    ),
-                    Container(
-                      height: 33,
-                      width: 36,
-                      decoration: BoxDecoration(
-                        color: iconBgColor,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Icon(iconData, color: iconColor),
-                    ),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    Expanded(
-                      child: Text(title!,
-                          style: TextStyle(
-                              fontSize: 20,
-                              letterSpacing: 1,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white)),
-                    ),
-                    Text(time!,
-                        style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white)),
-                    SizedBox(
-                      width: 20,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          )
+              ))
         ],
       ),
     );

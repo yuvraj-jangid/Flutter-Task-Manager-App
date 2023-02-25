@@ -1,16 +1,11 @@
-
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 
 class ViewData extends StatefulWidget {
-  ViewData({Key? key, this.document,this.id}) : super(key: key);
+  ViewData({Key? key, this.document, this.docId}) : super(key: key);
   final Map<String, dynamic>? document;
-  final String? id;
+  final String? docId;
 
   @override
   State<ViewData> createState() => _ViewDataState();
@@ -22,6 +17,8 @@ class _ViewDataState extends State<ViewData> {
   String? type;
   String? category;
   bool? edit = false;
+  // ignore: unused_field
+  // late final List<Widget> _id = AddTodo(documentId:)
 
   @override
   void initState() {
@@ -66,16 +63,35 @@ class _ViewDataState extends State<ViewData> {
                     iconSize: 28,
                     padding: const EdgeInsets.only(left: 10),
                   ),
-                  IconButton(
-                    onPressed: () {
-                      setState(() {
-                        edit = !edit!;
-                      });
-                    },
-                    icon: Icon(Icons.edit),
-                    color: edit! ? Colors.blue : Colors.white,
-                    iconSize: 28,
-                    padding: const EdgeInsets.only(left: 10),
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            edit = !edit!;
+                          });
+                        },
+                        icon: const Icon(Icons.edit),
+                        color: edit! ? Colors.blue : Colors.white,
+                        iconSize: 28,
+                        padding: const EdgeInsets.only(left: 10),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          FirebaseFirestore.instance
+                              .collection("Tasks")
+                              .doc(widget.docId)
+                              .delete()
+                              .then((value) {
+                            Navigator.pop(context);
+                          });
+                        },
+                        icon: const Icon(Icons.delete),
+                        color: Colors.red,
+                        iconSize: 28,
+                        padding: const EdgeInsets.only(left: 10),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -87,7 +103,7 @@ class _ViewDataState extends State<ViewData> {
                   children: [
                     Text(
                       edit! ? "Editing" : "View",
-                      style: TextStyle(
+                      style: const TextStyle(
                           fontSize: 33,
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -181,7 +197,10 @@ class _ViewDataState extends State<ViewData> {
   Widget button() {
     return InkWell(
       onTap: () {
-        FirebaseFirestore.instance.collection("Tasks").doc(widget.id).update({
+        FirebaseFirestore.instance
+            .collection("Tasks")
+            .doc(widget.docId)
+            .update({
           "title": _titleController!.text.trim(),
           "description": _descController!.text.trim(),
           "task-type": type,
@@ -223,7 +242,11 @@ class _ViewDataState extends State<ViewData> {
           : null,
       child: Chip(
         backgroundColor: type == label ? Colors.white : Color(color),
-        shape: type == label ?RoundedRectangleBorder(borderRadius: BorderRadius.circular(12),side: BorderSide(color: Colors.blue,width: 2)): RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: type == label
+            ? RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: const BorderSide(color: Colors.blue, width: 2))
+            : RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         label: Text(
           label,
           style: TextStyle(
@@ -248,7 +271,9 @@ class _ViewDataState extends State<ViewData> {
           : null,
       child: Chip(
         backgroundColor: category == label ? Colors.white : Color(color),
-        shape: type == label ?  RoundedRectangleBorder(borderRadius: BorderRadius.circular(144)):RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: type == label
+            ? RoundedRectangleBorder(borderRadius: BorderRadius.circular(144))
+            : RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         label: Text(
           label,
           style: TextStyle(

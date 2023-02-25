@@ -1,10 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 
 class AddTodo extends StatefulWidget {
   const AddTodo({super.key});
@@ -14,10 +11,11 @@ class AddTodo extends StatefulWidget {
 }
 
 class _AddTodoState extends State<AddTodo> {
-  TextEditingController _titleController = TextEditingController();
-  TextEditingController _descController = TextEditingController();
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _descController = TextEditingController();
   String type = "";
   String category = "";
+  late var docId = "";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -164,6 +162,8 @@ class _AddTodoState extends State<AddTodo> {
           "category": category,
           "created": FieldValue.serverTimestamp(),
           "author": user,
+        }).then((DocumentReference doc) {
+          docId = doc.id;
         });
         Navigator.pop(context);
       },
@@ -199,8 +199,11 @@ class _AddTodoState extends State<AddTodo> {
       },
       child: Chip(
         backgroundColor: type == label ? Colors.white : Color(color),
-        shape: type == label ?RoundedRectangleBorder(borderRadius: BorderRadius.circular(12),side: BorderSide(color: Colors.blue,width: 2)): RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))
-        ,
+        shape: type == label
+            ? RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: BorderSide(color: Colors.blue, width: 2))
+            : RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         label: Text(
           label,
           style: TextStyle(
@@ -223,7 +226,11 @@ class _AddTodoState extends State<AddTodo> {
       },
       child: Chip(
         backgroundColor: category == label ? Colors.white : Color(color),
-        shape: type == label ?RoundedRectangleBorder(borderRadius: BorderRadius.circular(12),side: BorderSide(color: Colors.red,width: 2)): RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: type == label
+            ? RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: BorderSide(color: Colors.red, width: 2))
+            : RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         label: Text(
           label,
           style: TextStyle(
